@@ -1,0 +1,30 @@
+---
+resources:
+- name: concourse-sample-app
+  type: git
+  source:
+    uri: https://github.com/amcginlay/concourse-sample-app
+    branch: master
+
+- name: cf-push-resource
+  type: cf
+  source:
+    api: {{cf-api}}
+    username: {{cf-user}}
+    password: {{cf-password}}
+    organization: {{cf-org}}
+    space: {{cf-space}}
+    skip_cert_check: true
+
+jobs:
+- name: build-artifact-job
+  public: true
+  plan:
+  - get: concourse-sample-app
+    trigger: true
+  - task: package
+    file: concourse-sample-app/ci/tasks/package.yml
+  - put: cf-push-resource
+    params:
+      manifest: concourse-sample-app/manifest.yml
+      path: package-output/concourse-sample-app.jar
