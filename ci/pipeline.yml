@@ -21,7 +21,7 @@ jobs:
   public: true
   plan:
   - get: concourse-sample-app
-    trigger: true
+#    trigger: true
   - task: package
     file: concourse-sample-app/ci/tasks/package.yml
   - put: cf-push-resource
